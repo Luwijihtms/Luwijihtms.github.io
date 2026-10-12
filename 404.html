@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 · Host unreachable</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #070a10; --text: #e6edf6; --dim: #5d6d85; --acc: #5dffa8; --err: #ff5d73; }
+    @media (prefers-color-scheme: light) { :root { --bg: #f2eee4; --text: #15191f; --dim: #8a909c; --acc: #0b8a4c; --err: #cf2d45; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 16px; background: var(--bg); color: var(--text); font: 15px/1.7 "JetBrains Mono", ui-monospace, monospace; }
+    main { width: min(640px, 100%); }
+    h1 { font-size: clamp(64px, 18vw, 140px); line-height: 1; margin: 0 0 10px; letter-spacing: -0.05em; }
+    .err { color: var(--err); } .ok { color: var(--acc); } .dim { color: var(--dim); }
+    pre { white-space: pre-wrap; margin: 0 0 24px; }
+    a { color: var(--acc); }
+    .cursor { animation: b 1s steps(2) infinite; } @keyframes b { 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>404</h1>
+<pre><span class="dim">$</span> traceroute <span id="path"></span>
+ 1  luwijihtms.github.io   1.2 ms
+ 2  * * *
+ 3  * * *
+<span class="err">traceroute: destination host unreachable</span>
+
+<span class="dim">This page doesn't exist. It may have been moved, renamed, or never existed.</span></pre>
+    <p><span class="ok">→</span> <a href="/">return to the portfolio</a><span class="cursor">_</span></p>
+  </main>
+  <script>document.getElementById('path').textContent = location.pathname;</script>
+</body>
+</html>

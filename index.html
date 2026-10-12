@@ -1,138 +1,558 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Luigi Adrian Hatamosa | Developer Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <title>Luigi Hatamosa — IT Support · Builder · Breaker</title>
+  <meta name="description" content="Portfolio of Luigi Adrian T. Hatamosa — BSIT student at the University of San Carlos, Cisco-trained in networking and cybersecurity, and a builder of apps and games." />
+  <meta name="theme-color" content="#070a10" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://luwijihtms.github.io/" />
+  <meta property="og:title" content="Luigi Hatamosa — IT Support · Builder · Breaker" />
+  <meta property="og:description" content="Networking, cybersecurity and a habit of building things, then breaking them on purpose. Come talk to my shell." />
+  <meta property="og:image" content="https://luwijihtms.github.io/assets/luigi.jpg" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- For icons -->
+  <script>
+    // Runs before paint: pick theme and decide whether to show the boot screen.
+    (function () {
+      var html = document.documentElement;
+      try {
+        var t = localStorage.getItem('lh-theme');
+        if (t) html.dataset.theme = JSON.parse(t);
+        else if (matchMedia('(prefers-color-scheme: light)').matches) html.dataset.theme = 'light';
+      } catch (e) {}
+      var booted = false;
+      try { booted = sessionStorage.getItem('lh-booted') === '1'; } catch (e) {}
+      if (!booted && !matchMedia('(prefers-reduced-motion: reduce)').matches) html.classList.add('booting');
+      html.classList.add('js');
+    })();
+  </script>
 </head>
 <body>
-  <div class="bg-layer layer-deep parallax-layer" data-rate="0.12"></div>
-  <div class="bg-layer layer-mid parallax-layer" data-rate="0.06"></div>
-  <div class="bg-layer layer-nebula parallax-layer" data-rate="0.03"></div>
-  <div class="bg-layer layer-twinkle"></div>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <div class="floating-blobs"></div>
+  <!-- Boot screen (once per session) -->
+  <div class="boot" id="boot" aria-hidden="true">
+    <pre class="boot-log" id="boot-log"></pre>
+    <p class="boot-skip">press any key to skip</p>
+  </div>
 
-  <header class="site-header">
-    <nav class="nav">
-      <a class="nav-logo gradient-text" href="#hero">Luigi Adrian Hatamosa</a>
-      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
-      <div class="nav-links">
-        <a href="#hero" class="nav-link">Home</a>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#projects" class="nav-link">Projects</a>
-        <a href="#skills" class="nav-link">Skills</a>
-        <a href="#contact" class="nav-link">Contact</a>
-      </div>
+  <canvas id="net-bg" class="net-bg" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <a class="nav-logo" href="#home" aria-label="Luigi Hatamosa, back to top">
+      <span class="acc">luigi</span><span class="dim">@usc:~$</span><span class="blink">_</span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Sections">
+      <a href="#shell"><i>00</i>shell</a>
+      <a href="#whoami"><i>01</i>whoami</a>
+      <a href="#route"><i>02</i>route</a>
+      <a href="#certs"><i>03</i>certs</a>
+      <a href="#quests"><i>04</i>projects</a>
+      <a href="#stack"><i>05</i>stack</a>
+      <a href="#firewall"><i>06</i>play</a>
+      <a href="#ping"><i>07</i>contact</a>
     </nav>
+    <div class="nav-tools">
+      <button class="chip" id="ach-btn" type="button" aria-haspopup="dialog" title="Achievements">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v3a5 5 0 0 1-10 0V4Zm5 8v4m-4 4h8m-6-4h4M7 6H4a3 3 0 0 0 3 4m10-4h3a3 3 0 0 1-3 4" /></svg>
+        <span id="ach-count">0/11</span>
+      </button>
+      <button class="icon-btn" id="theme-btn" type="button" aria-label="Toggle light and dark theme">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" /></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" /></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
   </header>
 
-  <main>
-    <section id="hero" class="section hero-section">
-        <div class="hero-text">
-          <h1 class="hero-title">
-            Hi, I'm <span class="accent typing">Luigi Adrian Hatamosa</span><span class="cursor">|</span>
-          </h1>
-          <p class="hero-sub">Web Developer • Problem Solver • Creative Thinker</p>
-          <div class="hero-ctas">
-            <button class="btn btn-primary" data-target="#projects">View My Work</button>
-            <a class="btn btn-ghost" href="assets/resume.pdf" target="_blank" rel="noopener">
-              <i class="fas fa-download"></i> Download Resume
-            </a>
+  <main id="main">
+    <!-- HERO -->
+    <section id="home" class="hero">
+      <div class="hero-copy">
+        <p class="status-line"><span class="pulse" aria-hidden="true"></span>online · Cebu, PH · <span id="clock">--:--</span> PHT</p>
+        <h1 class="hero-name">
+          <span class="scramble" data-text="Luigi Adrian">Luigi Adrian</span>
+          <span class="scramble outline" data-text="Hatamosa.">Hatamosa.</span>
+        </h1>
+        <p class="hero-role">I <span class="rotator" id="rotator">keep networks up</span><span class="caret" aria-hidden="true"></span></p>
+        <p class="hero-sub">IT student at the University of San Carlos, Cisco-trained in networking &amp; cybersecurity. I build things, then try to break them on purpose, so they're harder to break by accident.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary magnetic" href="#shell" data-focus-terminal>
+            <span class="mono">›_</span> open terminal
+          </a>
+          <a class="btn btn-ghost magnetic" href="assets/Hatamosa_Resume.pdf" target="_blank" rel="noopener">resume.pdf <span aria-hidden="true">↗</span></a>
+        </div>
+        <ul class="hero-meta">
+          <li><b data-count="5">0</b><span>certifications</span></li>
+          <li><b data-count="15">0</b><span>public repos</span></li>
+          <li><b data-count="1">0</b><span>capstone in flight</span></li>
+        </ul>
+        <p class="kbd-hint">tip: press <kbd>/</kbd> anywhere to jump into the shell</p>
+      </div>
+
+      <div class="badge-stage" id="badge-stage">
+        <div class="pivot" aria-hidden="true"></div>
+        <div class="pendulum" id="pendulum">
+          <div class="strap" aria-hidden="true"></div>
+          <div class="badge" id="badge" tabindex="0" role="button" aria-label="ID badge for Luigi Hatamosa. Press Enter to give it a push.">
+            <div class="badge-clip" aria-hidden="true"></div>
+            <div class="badge-head"><span>USC · BSIT</span><span class="badge-level">ACCESS <i></i><i></i><i></i><i class="off"></i></span></div>
+            <div class="badge-photo"><img src="assets/luigi.jpg" alt="Portrait of Luigi Adrian Hatamosa in his senior high STEM graduation sash" width="305" height="444" /></div>
+            <div class="badge-body">
+              <strong>HATAMOSA, LUIGI A.</strong>
+              <span>IT Support · QA · Game Dev</span>
+              <div class="badge-foot">
+                <div class="barcode" aria-hidden="true"></div>
+                <span class="mono">LH-2026</span>
+              </div>
+            </div>
+            <div class="badge-holo" aria-hidden="true"></div>
           </div>
         </div>
-        <div class="hero-image-wrap">
-          <div class="hero-image-glow"></div>
-          <img class="hero-image" src="assets/img1.jpg" alt="Luigi Adrian Hatamosa — portrait" />
+        <p class="badge-hint mono">↖ grab it. swing it.</p>
+      </div>
+    </section>
+
+    <!-- 00 SHELL -->
+    <section id="shell" class="section">
+      <header class="sec-head reveal">
+        <span class="sec-num">00</span>
+        <h2 data-scramble>Talk to my shell</h2>
+        <p>Type <kbd>help</kbd> to start. <kbd>Tab</kbd> completes, <kbd>↑</kbd> <kbd>↓</kbd> walks history. Not every command is listed.</p>
+      </header>
+      <div class="term reveal" id="term">
+        <div class="term-bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="term-title">guest@luigi-portfolio: ~</span>
+          <span class="term-tag">bash</span>
+        </div>
+        <div class="term-body" id="term-body">
+          <div class="term-out" id="term-out" role="log" aria-live="polite"></div>
+          <form class="term-line" id="term-form" autocomplete="off">
+            <label for="term-input" class="term-prompt"><span class="acc">guest@luigi</span>:<span class="info">~</span>$</label>
+            <input id="term-input" type="text" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="send" aria-label="Terminal command" />
+          </form>
+        </div>
+        <div class="term-chips" aria-label="Suggested commands">
+          <button type="button" data-cmd="help">help</button>
+          <button type="button" data-cmd="neofetch">neofetch</button>
+          <button type="button" data-cmd="projects">projects</button>
+          <button type="button" data-cmd="nmap luigi">nmap luigi</button>
+          <button type="button" data-cmd="sudo hire luigi">sudo hire luigi</button>
         </div>
       </div>
-      <div class="hero-info">
-        <h3>Quick Facts</h3>
+    </section>
+
+    <!-- 01 WHOAMI -->
+    <section id="whoami" class="section">
+      <header class="sec-head reveal">
+        <span class="sec-num">01</span>
+        <h2 data-scramble>whoami</h2>
+      </header>
+      <div class="who-grid">
+        <div class="who-copy reveal">
+          <p class="lead">I'm Luigi, an Information Technology student at the University of San Carlos in Cebu, with hands-on time in <mark>networking</mark>, <mark>cybersecurity fundamentals</mark> and <mark>software development</mark>.</p>
+          <p>Most of that came from Cisco Networking Academy labs: subnetting by hand, configuring switches and routers in simulated enterprise networks, and learning how analysts spot and respond to threats. The rest came from projects I built because I wanted to see if I could.</p>
+          <p>I'm heading into <strong>IT support</strong>, where the job is to keep people's tech out of their way. That means configuring the switch, triaging the ticket, and explaining the fix in plain words.</p>
+          <p class="muted">Off the clock I make games in Godot and apps with too many features. My favourite conditions: late-night playlists and rain outside.</p>
+        </div>
+
+        <aside class="charsheet reveal" aria-label="Character sheet">
+          <div class="cs-head">
+            <span class="mono dim">CHARACTER SHEET</span>
+            <span class="mono acc">LVL <span id="cs-level">—</span></span>
+          </div>
+          <dl class="cs-facts">
+            <div><dt>Class</dt><dd>IT Support</dd></div>
+            <div><dt>Subclass</dt><dd>QA · Game Dev</dd></div>
+            <div><dt>Alignment</dt><dd>Chaotic good: builds things, breaks them on purpose</dd></div>
+            <div><dt>Base</dt><dd>Cebu, Philippines</dd></div>
+            <div><dt>Guild</dt><dd>University of San Carlos</dd></div>
+          </dl>
+          <ul class="stats">
+            <li data-value="88"><span>Troubleshooting</span><b></b><em>88</em></li>
+            <li data-value="80"><span>Networking</span><b></b><em>80</em></li>
+            <li data-value="72"><span>Security</span><b></b><em>72</em></li>
+            <li data-value="70"><span>Programming</span><b></b><em>70</em></li>
+            <li data-value="92"><span>Teamwork</span><b></b><em>92</em></li>
+          </ul>
+          <p class="cs-note mono dim">* self-reported, calibrated with humility</p>
+          <div class="xp">
+            <div class="xp-top mono"><span>XP · BSIT 2023 → 2026</span><span id="xp-pct">0%</span></div>
+            <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 02 ROUTE -->
+    <section id="route" class="section">
+      <header class="sec-head reveal">
+        <span class="sec-num">02</span>
+        <h2 data-scramble>traceroute luigi</h2>
+        <p>Every hop between where I started and where I'm headed.</p>
+      </header>
+      <div class="trace" id="trace">
+        <div class="trace-cmd mono reveal"><span class="acc">$</span> traceroute -n luigi.hatamosa <span class="dim">(4 hops max, 60 byte packets)</span></div>
+        <div class="trace-rail" aria-hidden="true"><div class="trace-fill" id="trace-fill"></div><div class="trace-packet" id="trace-packet"></div></div>
+        <ol class="hops">
+          <li class="hop reveal">
+            <span class="hop-dot" aria-hidden="true"></span>
+            <div class="hop-card">
+              <div class="hop-top mono"><span>hop 1</span><span>2010 — 2021</span></div>
+              <h3>Saint Louis College — Cebu</h3>
+              <p>Basic education. Eleven years of foundations.</p>
+              <span class="hop-ms mono">rtt 11.0 yrs</span>
+            </div>
+          </li>
+          <li class="hop reveal">
+            <span class="hop-dot" aria-hidden="true"></span>
+            <div class="hop-card">
+              <div class="hop-top mono"><span>hop 2</span><span>2021 — 2023</span></div>
+              <h3>University of San Carlos — STEM Strand</h3>
+              <p>Senior high in the STEM strand. Class of 2023, the sash in the badge photo.</p>
+              <span class="hop-ms mono">rtt 2.0 yrs</span>
+            </div>
+          </li>
+          <li class="hop reveal">
+            <span class="hop-dot" aria-hidden="true"></span>
+            <div class="hop-card">
+              <div class="hop-top mono"><span>hop 3</span><span>2023 — 2026</span></div>
+              <h3>University of San Carlos — BS Information Technology</h3>
+              <p>Networking, security and software engineering, plus five certifications on the side. Capstone: LARGA, a taxi operations system for BLM Taxi.</p>
+              <span class="hop-ms mono">rtt 3.0 yrs · <span class="acc">current</span></span>
+            </div>
+          </li>
+          <li class="hop hop-next reveal">
+            <span class="hop-dot" aria-hidden="true"></span>
+            <div class="hop-card">
+              <div class="hop-top mono"><span>hop 4</span><span>next</span></div>
+              <h3 class="mono">* * *&nbsp; your-team.local</h3>
+              <p>Request timed out, probably because it's waiting on your reply.</p>
+              <a class="btn btn-ghost small" href="#ping">complete the route →</a>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 03 CERTS -->
+    <section id="certs" class="section">
+      <header class="sec-head reveal">
+        <span class="sec-num">03</span>
+        <h2 data-scramble>Achievements unlocked</h2>
+        <p>Certifications, sorted by year. Click a card to flip it.</p>
+      </header>
+      <div class="certs">
+        <button class="cert reveal" type="button" data-rarity="rare" aria-pressed="false">
+          <span class="cert-inner">
+            <span class="cert-face cert-front">
+              <span class="cert-top mono"><span>2024</span><span class="rarity">rare</span></span>
+              <span class="cert-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="10" cy="24" r="4"/><circle cx="38" cy="12" r="4"/><circle cx="38" cy="36" r="4"/><circle cx="24" cy="24" r="5"/><path d="M14 24h5m9-3 7-6m-7 12 7 6"/></svg></span>
+              <span class="cert-title">CCNA: Introduction to Networks</span>
+              <span class="cert-org">Cisco Networking Academy</span>
+            </span>
+            <span class="cert-face cert-back">
+              <span class="cert-top mono"><span>ITN</span><span>↺</span></span>
+              <span>A foundation in networking: IP addressing, subnetting and basic network device configuration.</span>
+            </span>
+          </span>
+        </button>
+        <button class="cert reveal" type="button" data-rarity="rare" aria-pressed="false">
+          <span class="cert-inner">
+            <span class="cert-face cert-front">
+              <span class="cert-top mono"><span>2024</span><span class="rarity">rare</span></span>
+              <span class="cert-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 5 9 11v11c0 10 6.5 17.5 15 21 8.5-3.5 15-11 15-21V11L24 5Z"/><path d="m17 24 5 5 9-10"/></svg></span>
+              <span class="cert-title">CCNA: Introduction to Cybersecurity</span>
+              <span class="cert-org">Cisco Networking Academy</span>
+            </span>
+            <span class="cert-face cert-back">
+              <span class="cert-top mono"><span>CYBER</span><span>↺</span></span>
+              <span>Core cybersecurity concepts: threat identification, data protection and common attack vectors.</span>
+            </span>
+          </span>
+        </button>
+        <button class="cert reveal" type="button" data-rarity="rare" aria-pressed="false">
+          <span class="cert-inner">
+            <span class="cert-face cert-front">
+              <span class="cert-top mono"><span>2025</span><span class="rarity">rare</span></span>
+              <span class="cert-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M14 34a8 8 0 0 1-1-15.9A11 11 0 0 1 34.5 16 9 9 0 0 1 35 34H14Z"/><path d="m20 23-3 3 3 3m8-6 3 3-3 3"/></svg></span>
+              <span class="cert-title">Python and AWS Elective Course</span>
+              <span class="cert-org">Zuitt Coding Bootcamp</span>
+            </span>
+            <span class="cert-face cert-back">
+              <span class="cert-top mono"><span>PY+AWS</span><span>↺</span></span>
+              <span>Python fundamentals and AWS cloud services, applied to practical application development.</span>
+            </span>
+          </span>
+        </button>
+        <button class="cert reveal" type="button" data-rarity="epic" aria-pressed="false">
+          <span class="cert-inner">
+            <span class="cert-face cert-front">
+              <span class="cert-top mono"><span>2025</span><span class="rarity">epic</span></span>
+              <span class="cert-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="6" y="28" width="36" height="10" rx="2"/><path d="M12 33h2m4 0h2m4 0h2"/><path d="M24 28v-8m-8-4a11 11 0 0 1 16 0m-12 4a5.5 5.5 0 0 1 8 0"/></svg></span>
+              <span class="cert-title">CCNA: Switching, Routing &amp; Wireless Essentials</span>
+              <span class="cert-org">Cisco Networking Academy</span>
+            </span>
+            <span class="cert-face cert-back">
+              <span class="cert-top mono"><span>SRWE</span><span>↺</span></span>
+              <span>Hands-on configuration of switches, routers and wireless LANs in simulated enterprise environments.</span>
+            </span>
+          </span>
+        </button>
+        <button class="cert reveal" type="button" data-rarity="legendary" aria-pressed="false">
+          <span class="cert-inner">
+            <span class="cert-face cert-front">
+              <span class="cert-top mono"><span>2025</span><span class="rarity">legendary</span></span>
+              <span class="cert-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="9"/><path d="M24 4v8m0 24v8M4 24h8m24 0h8"/><circle cx="24" cy="24" r="2"/></svg></span>
+              <span class="cert-title">Junior Cybersecurity Analyst Career Path</span>
+              <span class="cert-org">Cisco Networking Academy</span>
+            </span>
+            <span class="cert-face cert-back">
+              <span class="cert-top mono"><span>JCA</span><span>↺</span></span>
+              <span>Security monitoring, incident response fundamentals and analyst-level threat assessment workflows.</span>
+            </span>
+          </span>
+        </button>
+        <div class="cert cert-locked reveal" aria-label="Next certification: locked">
+          <span class="cert-inner">
+            <span class="cert-face cert-front">
+              <span class="cert-top mono"><span>20??</span><span>locked</span></span>
+              <span class="cert-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="12" y="22" width="24" height="18" rx="3"/><path d="M17 22v-5a7 7 0 0 1 14 0v5"/></svg></span>
+              <span class="cert-title">Next achievement</span>
+              <span class="cert-org">Loading… 37%</span>
+            </span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 PROJECTS -->
+    <section id="quests" class="section">
+      <header class="sec-head reveal">
+        <span class="sec-num">04</span>
+        <h2 data-scramble>Quest log</h2>
+        <p>Things I've built: apps, tools and games.</p>
+      </header>
+      <div class="filters reveal" role="group" aria-label="Filter projects">
+        <button type="button" class="filter is-on" data-filter="all">all</button>
+        <button type="button" class="filter" data-filter="app">apps</button>
+        <button type="button" class="filter" data-filter="tool">tools</button>
+        <button type="button" class="filter" data-filter="game">games</button>
+      </div>
+      <div class="quests" id="quest-grid">
+        <article class="quest quest-wide reveal" data-kind="app" data-tilt>
+          <div class="quest-art art-taxi" aria-hidden="true">
+            <div class="road"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="taxi"><span>BLM</span></div>
+            <div class="pin p1"></div><div class="pin p2"></div>
+          </div>
+          <div class="quest-body">
+            <div class="quest-meta mono"><span class="status status-live">in progress</span><span>main quest · capstone</span></div>
+            <h3>LARGA — BLM Taxi Digital System</h3>
+            <p>An integrated taxi operations management system for BLM Taxi. I'm working across system design, database integration and cross-platform app development, so one codebase runs the whole fleet.</p>
+            <ul class="tags"><li>.NET MAUI</li><li>C#</li><li>Firebase</li><li>Cross-platform</li></ul>
+          </div>
+        </article>
+
+        <article class="quest reveal" data-kind="tool" data-tilt>
+          <div class="quest-art art-voice" aria-hidden="true">
+            <div class="orb"></div>
+            <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <span class="jp">解析者</span>
+          </div>
+          <div class="quest-body">
+            <div class="quest-meta mono"><span class="status">shipped</span><span>side quest</span></div>
+            <h3>Raphael</h3>
+            <p>A Great Sage-inspired voice desktop assistant for Windows. It's powered by Gemini and speaks both Japanese and English.</p>
+            <ul class="tags"><li>C#</li><li>Gemini API</li><li>Voice</li></ul>
+            <div class="quest-links"><a href="https://github.com/Luwijihtms/Raphael" target="_blank" rel="noopener">source ↗</a></div>
+          </div>
+        </article>
+
+        <article class="quest reveal" data-kind="game" data-tilt>
+          <div class="quest-art art-rpg" aria-hidden="true">
+            <div class="pixels"></div>
+            <div class="hero-sprite"></div>
+            <div class="dialog mono">An echo stirs…<span>▼</span></div>
+          </div>
+          <div class="quest-body">
+            <div class="quest-meta mono"><span class="status">shipped</span><span>game</span></div>
+            <h3>Echoes of the Past</h3>
+            <p>A mini RPG built in Godot. I handled the gameplay logic, scene design and character interactions.</p>
+            <ul class="tags"><li>Godot</li><li>GDScript</li></ul>
+            <div class="quest-links"><a href="https://github.com/Luwijihtms?tab=repositories&amp;language=gdscript" target="_blank" rel="noopener">godot repos ↗</a></div>
+          </div>
+        </article>
+
+        <article class="quest reveal" data-kind="app" data-tilt>
+          <div class="quest-art art-music" aria-hidden="true">
+            <div class="vinyl"><i></i></div>
+            <div class="eq"><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="quest-body">
+            <div class="quest-meta mono"><span class="status">shipped</span><span>mobile</span></div>
+            <h3>Mini Spotify App</h3>
+            <p>A music-player style app that recreates Spotify's core features: playback controls and track browsing.</p>
+            <ul class="tags"><li>TypeScript</li><li>Mobile</li></ul>
+            <div class="quest-links"><a href="https://github.com/Luwijihtms/adv-mob-dev" target="_blank" rel="noopener">source ↗</a></div>
+          </div>
+        </article>
+
+        <article class="quest reveal" data-kind="game" data-tilt>
+          <div class="quest-art art-code" aria-hidden="true">
+            <pre class="mono"><span class="k">class</span> <span class="t">Player</span> {
+  <span class="k">int</span> xp = <span class="n">0</span>;
+  <span class="k">void</span> learn() {
+    xp += <span class="n">10</span>; <span class="c">// +1 concept</span>
+  }
+}</pre>
+            <div class="xp-pop mono">+10 XP</div>
+          </div>
+          <div class="quest-body">
+            <div class="quest-meta mono"><span class="status">shipped</span><span>edu game</span></div>
+            <h3>Gamify</h3>
+            <p>A game for learning Java that turns core programming concepts into gameplay mechanics.</p>
+            <ul class="tags"><li>Java</li><li>Game design</li></ul>
+          </div>
+        </article>
+      </div>
+
+      <div class="side-quests reveal">
+        <h3 class="mono dim">// side quests: small builds from class</h3>
         <ul>
-          <li>📍 Based in Cebu, PH</li>
-          <li>💻 Student</li>
-          <li>🌱 Willing to learn & a Tech Enthusiast</li>
+          <li data-kind="tool"><a href="https://github.com/Luwijihtms/hatamosa-luigi-meal-api" target="_blank" rel="noopener"><span>meal-api</span><em>HTML · API integration</em></a></li>
+          <li data-kind="tool"><a href="https://github.com/Luwijihtms/hatamosa-luigi-movie-api" target="_blank" rel="noopener"><span>movie-api</span><em>HTML · API integration</em></a></li>
+          <li data-kind="tool"><a href="https://github.com/Luwijihtms/hatamosa-books-mw600" target="_blank" rel="noopener"><span>books-mw600</span><em>JavaScript · middleware</em></a></li>
+          <li><a href="https://github.com/Luwijihtms?tab=repositories" target="_blank" rel="noopener"><span>all repositories</span><em>github.com/Luwijihtms ↗</em></a></li>
         </ul>
       </div>
     </section>
 
-    <section id="about" class="section">
-      <h2 class="section-title gradient-text">Who I Am</h2>
-      <p class="lead">I'm a passionate web developer who loves building elegant, performant and accessible websites. I focus on clean code, pleasant UI/UX and reusable components.</p>
-      <p class="muted">Fun fact: I enjoy songs that give a late night vibe especially during the rain!</p>
+    <!-- 05 STACK -->
+    <section id="stack" class="section">
+      <header class="sec-head reveal">
+        <span class="sec-num">05</span>
+        <h2 data-scramble>The stack, on a switch</h2>
+        <p>24 ports, 24 skills. Hover to inspect an interface and click to patch it in.</p>
+      </header>
+      <div class="switch reveal" id="switch">
+        <div class="switch-face">
+          <div class="switch-brand mono">
+            <span><b>SW-LUIGI-01</b> · 24-port managed</span>
+            <span class="sys-leds"><i class="on"></i>SYS <i class="on"></i>STAT <i class="blink-led"></i>ACT</span>
+          </div>
+          <div class="ports" id="ports" role="group" aria-label="Skills as switch ports"></div>
+        </div>
+        <div class="switch-legend mono" role="group" aria-label="Highlight skill group">
+          <button type="button" data-group="net"><i class="g-net"></i>networking</button>
+          <button type="button" data-group="sec"><i class="g-sec"></i>security</button>
+          <button type="button" data-group="code"><i class="g-code"></i>code &amp; cloud</button>
+          <button type="button" data-group="ops"><i class="g-ops"></i>ops</button>
+          <button type="button" data-group="soft"><i class="g-soft"></i>human layer</button>
+        </div>
+        <pre class="switch-console mono" id="switch-console" aria-live="polite">SW-LUIGI-01# show interface status
+<span class="dim">hover or focus a port to inspect it…</span></pre>
+      </div>
     </section>
 
-    <section id="projects" class="section">
-        <h2 class="section-title gradient-text">What I Do</h2>
-        <div class="cards">
-      
-          <article class="card">
-            <h3>Spotify App</h3>
-            <p>A mobile app that helps users track their habits. Built with React Native.</p>
-            <div class="card-actions">
-              <a class="btn small btn-ghost" href="https://github.com/Luwiji21800570/adv-mob-dev" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> Repo</a>
-            </div>
-          </article>
-      
-          <article class="card">
-            <h3>ApartManager</h3>
-            <p>An interactive website for a local business. Built with HTML, CSS, and JavaScript.</p>
-            <div class="card-actions">
-              <a class="btn small btn-ghost" href="https://github.com/Igneous12/Apartment-Manager" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> Repo</a>
-            </div>
-          </article>
-      
+    <!-- 06 GAME -->
+    <section id="firewall" class="section">
+      <header class="sec-head reveal">
+        <span class="sec-num">06</span>
+        <h2 data-scramble>Be the firewall</h2>
+        <p>Packets are inbound. Click the malicious ones before they reach the server and let legit traffic through. False positives cost you points.</p>
+      </header>
+      <div class="game reveal" id="game">
+        <div class="game-hud mono">
+          <span>score <b id="g-score">0</b></span>
+          <span>wave <b id="g-wave">1</b></span>
+          <span>integrity <b id="g-hp" class="hp">▮▮▮</b></span>
+          <span>best <b id="g-best">0</b></span>
         </div>
-      </section>
-      
-
-    <section id="skills" class="section">
-      <h2 class="section-title gradient-text">How I Work</h2>
-      <div class="skills-grid">
-        <div class="skill">
-          <h4>React</h4>
-          <p>State management and component-driven design.</p>
-        </div>
-        <div class="skill">
-          <h4>UI/UX</h4>
-          <p>Figma and Canva.</p>
-        </div>
-        <div class="skill">
-          <h4>HTML/CSS</h4>
-          <p>Easy to navigate design, responsive layouts, and accessible UI.</p>
+        <canvas id="game-canvas" aria-label="Firewall mini game"></canvas>
+        <div class="game-overlay" id="game-overlay">
+          <div class="go-card">
+            <h3 id="go-title">Firewall: standby</h3>
+            <p id="go-text">Malicious packets glow <span class="bad">red</span>. Legit ones glow <span class="good">green</span>. From wave 4, some traffic arrives encrypted, so read the labels.</p>
+            <button class="btn btn-primary" id="go-btn" type="button">start shift ▸</button>
+            <p class="mono dim go-small">space to start · works with touch</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="contact" class="section">
-      <h2 class="section-title gradient-text">Reach Me</h2>
-      <p class="lead">
-        Email: <a class="link" href="mailto:21800570@usc.edu.ph">21800570@usc.edu.ph</a>
-      </p>
-      <p class="lead">
-        GitHub: <a class="link" href="https://github.com/Luwiji21800570" target="_blank" rel="noopener">Luwiji21800570</a>
-      </p>
-      <div class="contact-ctas">
-        <a class="btn btn-primary" href="mailto:hatamosaluigi@gmail.com"><i class="fas fa-envelope"></i> Send Email</a>
-        <a class="btn btn-ghost" href="https://github.com/Luwiji21800570" target="_blank" rel="noopener"><i class="fab fa-github"></i> Open GitHub</a>
+    <!-- 07 CONTACT -->
+    <section id="ping" class="section">
+      <header class="sec-head reveal">
+        <span class="sec-num">07</span>
+        <h2 data-scramble>ping luigi</h2>
+        <p>Check whether I'm reachable. (I am.)</p>
+      </header>
+      <div class="contact-grid">
+        <div class="ping-box reveal">
+          <div class="term-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="term-title">ICMP</span></div>
+          <pre class="ping-out mono" id="ping-out" aria-live="polite"><span class="dim">ready. press the button to send 4 echo requests.</span></pre>
+          <button class="btn btn-primary ping-btn" id="ping-btn" type="button"><span class="radar" aria-hidden="true"></span> ping -c 4 luigi</button>
+        </div>
+        <div class="contact-cards reveal">
+          <div class="c-card">
+            <span class="mono dim">email</span>
+            <a href="mailto:hatamosaluigi@gmail.com" class="c-big">hatamosaluigi@gmail.com</a>
+            <button type="button" class="copy-btn mono" data-copy="hatamosaluigi@gmail.com">copy</button>
+          </div>
+          <div class="c-card">
+            <span class="mono dim">github</span>
+            <a href="https://github.com/Luwijihtms" target="_blank" rel="noopener" class="c-big">github.com/Luwijihtms ↗</a>
+          </div>
+          <form class="compose" id="compose">
+            <span class="mono dim">compose</span>
+            <label class="sr-only" for="c-name">Your name</label>
+            <input id="c-name" name="name" placeholder="your name / org" required />
+            <label class="sr-only" for="c-msg">Message</label>
+            <textarea id="c-msg" name="msg" rows="4" placeholder="Hi Luigi, we have an IT support role…" required></textarea>
+            <button class="btn btn-ghost" type="submit">open in mail app →</button>
+          </form>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <p>© 2025 Luigi Adrian Hatamosa. All Rights Reserved.</p>
-    <p>
-      <a class="link" href="https://github.com/Luwiji21800570" target="_blank" rel="noopener"><i class="fab fa-github"></i> GitHub</a>
-      &nbsp;|&nbsp;
-      <a class="link" href="mailto:21800570@usc.edu.ph"><i class="fas fa-envelope"></i> 21800570@usc.edu.ph</a>
-    </p>
+  <footer class="footer" id="footer">
+    <div class="footer-row mono">
+      <span>© <span id="year">2026</span> Luigi Adrian T. Hatamosa</span>
+      <span class="dim">hand-built: HTML, CSS, vanilla JS · no frameworks were harmed</span>
+      <span>session uptime <b id="uptime">00:00</b></span>
+    </div>
+    <p class="footer-eof mono dim">-- EOF -- <a href="#home">return to top ↑</a></p>
   </footer>
 
-  <button id="back-to-top" title="Back to top">&#8679;</button>
+  <dialog class="ach-dialog" id="ach-dialog" aria-labelledby="ach-title">
+    <div class="ach-head">
+      <h2 id="ach-title">Achievements <span class="mono dim" id="ach-dialog-count"></span></h2>
+      <button class="icon-btn" type="button" id="ach-close" aria-label="Close">✕</button>
+    </div>
+    <div class="ach-bar"><div id="ach-bar-fill"></div></div>
+    <ul class="ach-list" id="ach-list"></ul>
+    <button class="mono dim ach-reset" type="button" id="ach-reset">reset progress</button>
+  </dialog>
 
-  <script src="script.js"></script>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="js/core.js" defer></script>
+  <script src="js/fx.js" defer></script>
+  <script src="js/terminal.js" defer></script>
+  <script src="js/sections.js" defer></script>
+  <script src="js/game.js" defer></script>
 </body>
 </html>
