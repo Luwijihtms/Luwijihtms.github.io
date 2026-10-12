@@ -132,11 +132,11 @@
     projects: {
       desc: 'things I built',
       run() {
-        print(kv('LARGA', 'BLM Taxi digital system · .NET MAUI + Firebase · <span class="warn">in progress (capstone)</span>'));
+        print(kv('LARGA', `BLM Taxi digital system · .NET MAUI + Firebase · <span class="warn">in progress (capstone)</span> · ${link('https://github.com/AlexaAko548/LARGA', 'repo')}`));
         print(kv('Raphael', `voice desktop assistant · C# + Gemini · ${link(`${GITHUB}/Raphael`, 'repo')}`));
-        print(kv('Echoes', 'mini RPG · Godot / GDScript'));
+        print(kv('Echoes', `mini RPG · Godot / GDScript · ${link('https://github.com/klarkkyyy/ETP', 'repo')}`));
         print(kv('MiniSpotify', `music player app · TypeScript · ${link(`${GITHUB}/adv-mob-dev`, 'repo')}`));
-        print(kv('Gamify', 'learn Java by playing · Java'));
+        print(kv('Gamify', `learn Java by playing · Java · ${link('https://github.com/klarkkyyy/OOP_Final-Proj', 'repo')}`));
         line("tip: 'goto quests' to see them with pictures", 'mut');
       },
     },
