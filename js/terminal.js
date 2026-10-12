@@ -70,7 +70,7 @@
     whoami: {
       desc: 'short version',
       run() {
-        line('luigi adrian t. hatamosa · BSIT @ University of San Carlos · aspiring IT support / QA · Cebu, PH');
+        line('luigi adrian t. hatamosa · BSIT @ University of San Carlos · IT intern (QA & front-end) @ ShopSmart Philippines · Cebu, PH');
         line('(you are "guest". but thanks for asking.)', 'mut');
       },
     },
@@ -99,6 +99,7 @@
           kv('OS', 'LuigiOS 2026 (Cebu edition)'),
           kv('Host', 'University of San Carlos'),
           kv('Kernel', 'BSIT 2023 → 2026'),
+          kv('Uptime', 'IT intern @ ShopSmart PH since Sep 2026'),
           kv('Shell', 'bash, PowerShell, Cisco IOS'),
           kv('Packages', '5 certs, 5 projects, 15 repos'),
           kv('Languages', 'C, Java, Python, C#, TS, GDScript'),
@@ -116,6 +117,7 @@
         print(kv('2010–2021', 'Saint Louis College — Cebu'));
         print(kv('2021–2023', 'University of San Carlos — STEM strand'));
         print(kv('2023–2026', 'University of San Carlos — BS Information Technology'));
+        print(kv('2026–now', 'ShopSmart Philippines — IT Intern (QA & front-end dev)'));
         line("tip: 'goto route' for the animated version", 'mut');
       },
     },
